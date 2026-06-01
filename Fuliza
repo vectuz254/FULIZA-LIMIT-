@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Safaricom Fuliza – Overdraft Guide</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <nav>
+      <span class="logo">🟢 Safaricom Fuliza</span>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#brackets">Brackets</a></li>
+        <li><a href="#agent">Agent Commission</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-content">
+      <h1>🟢 FULIZA M-PESA</h1>
+      <p class="tagline">Kenya's #1 Overdraft Service. Borrow. Repay. Thrive.</p>
+      <p class="hero-desc">
+        Fuliza is Safaricom's overdraft facility that allows M-PESA users to
+        complete transactions even when they have insufficient funds.
+        Understand exactly how overdraft charges work — and how much agents earn.
+      </p>
+      <a href="#brackets" class="btn">View Fuliza Brackets</a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <h2>What is Fuliza?</h2>
+    <div class="about-grid">
+      <div class="about-card">
+        <span class="icon">📱</span>
+        <h3>How It Works</h3>
+        <p>When your M-PESA balance is insufficient, Fuliza automatically tops up your transaction. You repay from your next M-PESA deposit.</p>
+      </div>
+      <div class="about-card">
+        <span class="icon">📅</span>
+        <h3>Daily Charges</h3>
+        <p>Fuliza charges a daily maintenance fee based on the outstanding overdraft amount until it is fully repaid.</p>
+      </div>
+      <div class="about-card">
+        <span class="icon">✅</span>
+        <h3>Auto Repayment</h3>
+        <p>Any money received into your M-PESA is automatically used to repay your Fuliza balance first before you can access it.</p>
+      </div>
+      <div class="about-card">
+        <span class="icon">🔓</span>
+        <h3>How to Activate</h3>
+        <p>Dial *234# or open M-PESA app → Fuliza → Activate. Your limit is set based on your M-PESA usage history.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRACKETS TABLE -->
+  <section id="brackets">
+    <h2>Fuliza Overdraft Brackets & Daily Charges</h2>
+    <p class="section-sub">Daily fees charged on outstanding Fuliza balance until repaid in full.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Overdraft Bracket</th>
+            <th>Amount (KSh)</th>
+            <th>Daily Fee (KSh)</th>
+            <th>Agent Commission (10%)</th>
+            <th>Access Fee</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🟢 Nano</td>
+            <td>1 – 100</td>
+            <td>2</td>
+            <td>KSh 0.20</td>
+            <td>KSh 2</td>
+          </tr>
+          <tr>
+            <td>🟢 Micro</td>
+            <td>101 – 500</td>
+            <td>5</td>
+            <td>KSh 0.50</td>
+            <td>KSh 5</td>
+          </tr>
+          <tr>
+            <td>🟢 Light</td>
+            <td>501 – 1,000</td>
+            <td>10</td>
+            <td>KSh 1.00</td>
+            <td>KSh 10</td>
+          </tr>
+          <tr>
+            <td>🟢 Basic</td>
+            <td>1,001 – 2,500</td>
+            <td>20</td>
+            <td>KSh 2.00</td>
+            <td>KSh 20</td>
+          </tr>
+          <tr>
+            <td>🟢 Standard</td>
+            <td>2,501 – 5,000</td>
+            <td>30</td>
+            <td>KSh 3.00</td>
+            <td>KSh 30</td>
+          </tr>
+          <tr>
+            <td>🟢 Plus</td>
+            <td>5,001 – 10,000</td>
+            <td>60</td>
+            <td>KSh 6.00</td>
+            <td>KSh 60</td>
+          </tr>
+          <tr>
+            <td>🟢 Premium</td>
+            <td>10,001 – 20,000</td>
+            <td>120</td>
+            <td>KSh 12.00</td>
+            <td>KSh 120</td>
+          </tr>
+          <tr>
+            <td>🟢 Elite</td>
+            <td>20,001 – 30,000</td>
+            <td>180</td>
+            <td>KSh 18.00</td>
+            <td>KSh 180</td>
+          </tr>
+          <tr>
+            <td>🟢 Ultra</td>
+            <td>30,001 – 50,000</td>
+            <td>250</td>
+            <td>KSh 25.00</td>
+            <td>KSh 250</td>
+          </tr>
+          <tr>
+            <td>🟢 Max</td>
+            <td>50,001 – 70,000</td>
+            <td>350</td>
+            <td>KSh 35.00</td>
+            <td>KSh 350</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">⚠️ Daily fees accumulate every day until the full overdraft is repaid. The sooner you repay, the less you pay.</p>
+  </section>
+
+  <!-- AGENT COMMISSION -->
+  <section id="agent">
+    <h2>Agent Commission Structure</h2>
+    <p class="section-sub">Safaricom agents earn 10% of the daily fee charged on every Fuliza transaction facilitated.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Bracket</th>
+            <th>Daily Fee (KSh)</th>
+            <th>Agent Earns (10%)</th>
+            <th>Monthly (30 days)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🟢 Nano (1–100)</td>
+            <td>KSh 2</td>
+            <td>KSh 0.20</td>
+            <td>KSh 6.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Micro (101–500)</td>
+            <td>KSh 5</td>
+            <td>KSh 0.50</td>
+            <td>KSh 15.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Light (501–1,000)</td>
+            <td>KSh 10</td>
+            <td>KSh 1.00</td>
+            <td>KSh 30.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Basic (1,001–2,500)</td>
+            <td>KSh 20</td>
+            <td>KSh 2.00</td>
+            <td>KSh 60.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Standard (2,501–5,000)</td>
+            <td>KSh 30</td>
+            <td>KSh 3.00</td>
+            <td>KSh 90.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Plus (5,001–10,000)</td>
+            <td>KSh 60</td>
+            <td>KSh 6.00</td>
+            <td>KSh 180.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Premium (10,001–20,000)</td>
+            <td>KSh 120</td>
+            <td>KSh 12.00</td>
+            <td>KSh 360.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Elite (20,001–30,000)</td>
+            <td>KSh 180</td>
+            <td>KSh 18.00</td>
+            <td>KSh 540.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Ultra (30,001–50,000)</td>
+            <td>KSh 250</td>
+            <td>KSh 25.00</td>
+            <td>KSh 750.00</td>
+          </tr>
+          <tr>
+            <td>🟢 Max (50,001–70,000)</td>
+            <td>KSh 350</td>
+            <td>KSh 35.00</td>
+            <td>KSh 1,050.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">💡 The more customers you serve, the more commission you stack daily!</p>
+  </section>
+
+  <!-- WHY FULIZA -->
+  <section id="why">
+    <h2>Why Choose Fuliza?</h2>
+    <div class="features">
+      <div class="feature-card">
+        <span class="icon">⚡</span>
+        <h3>Instant Access</h3>
+        <p>Get overdraft funds instantly with no paperwork or waiting period.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">📊</span>
+        <h3>Flexible Limits</h3>
+        <p>Your Fuliza limit grows automatically as you use M-PESA more frequently.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🔒</span>
+        <h3>Secure & Trusted</h3>
+        <p>Backed by Safaricom and NCBA Bank — Kenya's most trusted financial institutions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <h2>Get In Touch</h2>
+    <p>Have questions about Fuliza or agent commissions? Reach out to us.</p>
+    <div class="contact-box">
+      <input type="text" placeholder="Your Full Name" />
+      <input type="email" placeholder="Your Email Address" />
+      <input type="tel" placeholder="Your Phone Number" />
+      <select>
+        <option>I am a...</option>
+        <option>M-PESA Customer</option>
+        <option>Safaricom Agent</option>
+        <option>Business Owner</option>
+        <option>Student / Researcher</option>
+      </select>
+      <textarea placeholder="Your message or question..." rows="4"></textarea>
+      <button class="btn">Send Message</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>🟢 © 2026 Safaricom Fuliza — School Project by vectuz254 | For Educational Purposes Only</p>
+  </footer>
+
+</body>
+</html>
