@@ -1,4 +1,3 @@
-index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,27 +41,31 @@ index.html
       <div class="about-card">
         <span class="icon">📱</span>
         <h3>How It Works</h3>
-        <p>When your M-PESA balance is insufficient, Fuliza automatically tops up your transaction. You repay from your next M-PESA deposit.</p>
+        <p>When your M-PESA balance is insufficient, Fuliza automatically tops up
+        your transaction. You repay from your next M-PESA deposit.</p>
       </div>
       <div class="about-card">
         <span class="icon">📅</span>
         <h3>Daily Charges</h3>
-        <p>Fuliza charges a daily maintenance fee based on the outstanding overdraft amount until it is fully repaid.</p>
+        <p>Fuliza charges a daily maintenance fee based on the outstanding
+        overdraft amount until it is fully repaid.</p>
       </div>
       <div class="about-card">
         <span class="icon">✅</span>
         <h3>Auto Repayment</h3>
-        <p>Any money received into your M-PESA is automatically used to repay your Fuliza balance first before you can access it.</p>
+        <p>Any money received into your M-PESA is automatically used to repay
+        your Fuliza balance first before you can access it.</p>
       </div>
       <div class="about-card">
         <span class="icon">🔓</span>
         <h3>How to Activate</h3>
-        <p>Dial *234# or open M-PESA app → Fuliza → Activate. Your limit is set based on your M-PESA usage history.</p>
+        <p>Dial *234# or open M-PESA app → Fuliza → Activate. Your limit is
+        set based on your M-PESA usage history.</p>
       </div>
     </div>
   </section>
 
-  <!-- AGENT COMMISSION TABLE (MAIN) -->
+  <!-- BRACKETS TABLE -->
   <section id="brackets">
     <h2>Fuliza Brackets & Agent Commission</h2>
     <p class="section-sub">
@@ -144,7 +147,8 @@ index.html
         </tbody>
       </table>
     </div>
-    <p class="note">💡 Agent earns 10% of every Fuliza charge. The more transactions you facilitate, the more you earn daily!</p>
+    <p class="note">💡 Agent earns 10% of every Fuliza charge. The more
+    transactions you facilitate, the more you earn daily!</p>
   </section>
 
   <!-- WHY FULIZA -->
@@ -154,17 +158,20 @@ index.html
       <div class="feature-card">
         <span class="icon">⚡</span>
         <h3>Instant Commission</h3>
-        <p>Earn 10% on every Fuliza transaction processed through your till number automatically.</p>
+        <p>Earn 10% on every Fuliza transaction processed through your
+        till number automatically.</p>
       </div>
       <div class="feature-card">
         <span class="icon">📊</span>
         <h3>No Limit on Earnings</h3>
-        <p>The more customers you serve, the more you earn. No cap on daily commission.</p>
+        <p>The more customers you serve, the more you earn.
+        No cap on daily commission.</p>
       </div>
       <div class="feature-card">
         <span class="icon">🔒</span>
         <h3>Secure & Trusted</h3>
-        <p>Backed by Safaricom and NCBA Bank — Kenya's most trusted financial institutions.</p>
+        <p>Backed by Safaricom and NCBA Bank — Kenya's most trusted
+        financial institutions.</p>
       </div>
     </div>
   </section>
@@ -172,10 +179,11 @@ index.html
   <!-- CONTACT -->
   <section id="contact">
     <h2>Get In Touch</h2>
-    <p>Have questions about Fuliza or agent commissions? Reach out to us directly
-       0712495794 OR ⬇️.</p>
+    <p>Have questions about Fuliza or agent commissions? Reach out directly.</p>
 
     <div class="contact-box">
+
+      <!-- DIRECT EMAIL -->
       <div class="email-direct">
         <span class="icon">📧</span>
         <p>Send us an email directly:</p>
@@ -186,29 +194,109 @@ index.html
 
       <div class="divider">— or fill in the form below —</div>
 
-      <form action="https://formspree.io/f/xyzabcde" method="POST">
-        <input type="text" name="name" placeholder="Your Full Name" required />
-        <input type="email" name="email" placeholder="Your Email Address" required />
-        <input type="tel" name="phone" placeholder="Your Phone Number" />
-        <select name="type">
-          <option>I am a...</option>
-          <option>M-PESA Customer</option>
-          <option>Safaricom Agent</option>
-          <option>Business Owner</option>
-          <option>Student / Researcher</option>
-        </select>
-        <textarea name="message" placeholder="Your message or question..." rows="4"></textarea>
-        <button type="submit" class="btn">Send Message</button>
-      </form>
+      <!-- SUCCESS MESSAGE -->
+      <div id="success-msg">
+        ✅ Message sent! We'll get back to you shortly.
+      </div>
+
+      <!-- ERROR MESSAGE -->
+      <div id="error-msg">
+        ❌ Something went wrong. Please email us directly.
+      </div>
+
+      <!-- FORM FIELDS -->
+      <input type="text" id="f-name" placeholder="Your Full Name" />
+      <input type="email" id="f-email" placeholder="Your Email Address" />
+      <input type="tel" id="f-phone" placeholder="Your Phone Number (e.g. 0712345678)" />
+      <select id="f-type">
+        <option value="">I am a...</option>
+        <option>M-PESA Customer</option>
+        <option>Safaricom Agent</option>
+        <option>Business Owner</option>
+        <option>Student / Researcher</option>
+      </select>
+      <textarea id="f-message" placeholder="Your message or question..." rows="4"></textarea>
+
+      <button onclick="submitForm()" class="btn" id="submit-btn">
+        📤 Send Message
+      </button>
+
     </div>
   </section>
 
   <footer>
-    <p>🟢 © 2026 Safaricom Fuliza T & C Apply</p>
+    <p>🟢 © 2026 Safaricom Fuliza — School Project by vectuz254 |
+    For Educational Purposes Only</p>
     <p style="margin-top:0.5rem;">
-      📧 <a href="mailto:fulizasafservices@gmail.com" style="color:#7ecf9e;">fulizasafservices@gmail.com</a>
+      📧 <a href="mailto:fulizasafservices@gmail.com"
+      style="color:#7ecf9e;">fulizasafservices@gmail.com</a>
     </p>
   </footer>
 
+  <!-- GOOGLE SHEETS SCRIPT -->
+  <script>
+    function submitForm() {
+
+      // Get values
+      var name = document.getElementById('f-name').value.trim();
+      var email = document.getElementById('f-email').value.trim();
+      var phone = document.getElementById('f-phone').value.trim();
+      var type = document.getElementById('f-type').value.trim();
+      var message = document.getElementById('f-message').value.trim();
+
+      // Hide old messages
+      document.getElementById('success-msg').style.display = 'none';
+      document.getElementById('error-msg').style.display = 'none';
+
+      // Validate
+      if (!name || !email) {
+        alert('Please enter your name and email!');
+        return;
+      }
+
+      // Update button
+      var btn = document.getElementById('submit-btn');
+      btn.innerText = '⏳ Sending...';
+      btn.disabled = true;
+
+      // ⬇️ PASTE YOUR GOOGLE APPS SCRIPT URL BELOW
+      var scriptURL = 'PASTE_YOUR_WEB_APP_URL_HERE';
+
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          phone: phone,
+          type: type,
+          message: message
+        })
+      })
+      .then(function(response) {
+        // Show success
+        document.getElementById('success-msg').style.display = 'block';
+        // Clear fields
+        document.getElementById('f-name').value = '';
+        document.getElementById('f-email').value = '';
+        document.getElementById('f-phone').value = '';
+        document.getElementById('f-type').value = '';
+        document.getElementById('f-message').value = '';
+        // Reset button
+        btn.innerText = '📤 Send Message';
+        btn.disabled = false;
+      })
+      .catch(function(error) {
+        // Show error
+        document.getElementById('error-msg').style.display = 'block';
+        // Reset button
+        btn.innerText = '📤 Send Message';
+        btn.disabled = false;
+      });
+    }
+  </script>
+
 </body>
-  </html>
+</html>
