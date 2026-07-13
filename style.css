@@ -397,3 +397,28 @@ input, select, textarea, button { font-family: inherit; }
 @media (max-width: 1024px) {
   .hero-photo-card { max-width: 340px; margin: 0 auto; }
 }
+<!-- ===== CHAT WIDGET ===== -->
+<button class="chat-toggle-btn" id="chatToggleBtn" aria-label="Chat with us">
+  <i class="fas fa-comment-dots"></i>
+</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-panel-header">
+    <div>
+      <strong>TOPJOBSEEKERS Assistant</strong>
+      <span class="chat-status"><i class="fas fa-circle"></i> Online</span>
+    </div>
+    <button id="chatCloseBtn" aria-label="Close chat"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <form class="chat-input-row" id="chatForm">
+    <input type="text" id="chatInput" placeholder="Type your question..." autocomplete="off" />
+    <button type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+<script src="chat-widget.js"></script>
+</body>
+</html>
