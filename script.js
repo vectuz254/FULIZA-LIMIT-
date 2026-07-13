@@ -23,33 +23,83 @@ function renderMarquee() {
   track.innerHTML = items + items; // duplicate once for the infinite scroll illusion
 }
 
-// ===== PROFESSION SHOWCASE (sliding photos) =====
+// ===== PROFESSION SHOWCASE (real, free-license photos via Pexels API) =====
+// Pexels photos are free for commercial use with no attribution required —
+// this pulls a real, diverse photo for each profession every time the page
+// loads, so you never have to manually source or license images yourself.
+const SHOWCASE_QUERIES = [
+  { title: 'Registered Nurse', query: 'black nurse hospital', flag: '🇦🇪' },
+  { title: 'Civil Engineer', query: 'black civil engineer construction site', flag: '🇸🇦' },
+  { title: 'Executive Chef', query: 'black chef restaurant kitchen', flag: '🇶🇦' },
+  { title: 'Software Developer', query: 'black software developer office laptop', flag: '🇬🇧' },
+  { title: 'Teacher', query: 'black teacher classroom', flag: '🇩🇪' },
+  { title: 'Logistics Coordinator', query: 'black warehouse logistics worker', flag: '🇦🇪' },
+  { title: 'Hospitality Staff', query: 'black hotel receptionist smiling', flag: '🇶🇦' },
+  { title: 'Financial Analyst', query: 'black business professional office meeting', flag: '🇸🇬' },
+];
+
+async function fetchPexelsPhoto(query, orientation = 'square') {
+  if (!PEXELS_API_KEY || PEXELS_API_KEY.includes('YOUR-PEXELS')) return null;
+  try {
+    const res = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1&orientation=${orientation}`,
+      { headers: { Authorization: PEXELS_API_KEY } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.photos && data.photos[0] ? data.photos[0] : null;
+  } catch (err) {
+    console.error('Pexels fetch failed:', err);
+    return null;
+  }
+}
+
 async function loadShowcase() {
   const track = document.getElementById('showcaseTrack');
   if (!track) return;
 
-  const { data, error } = await supabaseClient
-    .from('profession_showcase')
-    .select('*')
-    .eq('active', true)
-    .order('display_order', { ascending: true });
+  track.innerHTML = `<div class="showcase-loading"><i class="fas fa-spinner fa-spin"></i> Loading photos...</div>`;
 
-  if (error || !data || data.length === 0) {
-    track.innerHTML = '';
+  const results = await Promise.all(
+    SHOWCASE_QUERIES.map(async (item) => {
+      const photo = await fetchPexelsPhoto(item.query, 'square');
+      return {
+        ...item,
+        photo_url: photo ? photo.src.medium : null,
+        credit: photo ? photo.photographer : null,
+      };
+    })
+  );
+
+  const valid = results.filter(r => r.photo_url);
+  if (valid.length === 0) {
+    track.innerHTML = `<div class="showcase-loading">Add a free Pexels API key in supabase-config.js to show live photos here.</div>`;
     return;
   }
 
-  const cards = data.map(p => `
+  const cards = valid.map(p => `
     <div class="showcase-card">
-      <img src="${p.photo_url}" alt="${p.profession_title}" loading="lazy" />
+      <img src="${p.photo_url}" alt="${p.title}" loading="lazy" />
       <div class="showcase-caption">
-        <span>${p.profession_title}</span>
+        <span>${p.title}</span>
         ${p.flag ? `<span class="showcase-flag">${p.flag}</span>` : ''}
       </div>
     </div>
   `).join('');
 
-  track.innerHTML = cards + cards; // duplicate for seamless scroll
+  track.innerHTML = cards + cards; // duplicate for seamless infinite scroll
+}
+
+// ===== BIG STATIC HERO PHOTO =====
+async function loadHeroPhoto() {
+  const img = document.getElementById('heroPhoto');
+  if (!img) return;
+  const photo = await fetchPexelsPhoto('confident black professional smiling office portrait', 'portrait');
+  if (photo) {
+    img.src = photo.src.large2x || photo.src.large;
+    img.alt = 'Kenyan professional placed abroad';
+    document.getElementById('heroPhotoWrap')?.classList.add('loaded');
+  }
 }
 
 // ===== JOBS: load from Supabase =====
@@ -391,6 +441,7 @@ document.getElementById('contactForm')?.addEventListener('submit', function (e) 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   renderMarquee();
+  loadHeroPhoto();
   loadShowcase();
   loadJobs();
   loadTestimonials();
