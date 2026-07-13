@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard – TOPJOBSEEKERS</title>
+<link rel="stylesheet" href="style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  body { background: var(--blue-pale); }
+  .dash-header {
+    background: var(--navy); padding: 18px 0; display: flex; align-items: center;
+    justify-content: space-between; color: #fff;
+  }
+  .dash-header .container { display: flex; align-items: center; justify-content: space-between; }
+  .dash-role-pill { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; background: rgba(245,166,35,0.18); color: var(--gold); padding: 5px 12px; border-radius: 100px; margin-left: 10px; }
+  .dash-body { padding: 40px 0 80px; }
+  .dash-card { background: #fff; border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .dash-card h3 { color: var(--navy); margin-bottom: 16px; font-size: 18px; }
+  table.dash-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.dash-table th, table.dash-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  table.dash-table th { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .status-pill { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; text-transform: capitalize; }
+  .status-new { background: var(--blue-light); color: var(--blue); }
+  .status-reviewed { background: #fff3e0; color: #b8720b; }
+  .status-shortlisted { background: #e6f7f1; color: #0a7c4e; }
+  .status-placed { background: #0a7c4e; color: #fff; }
+  .status-rejected { background: #fdeceb; color: #b3261e; }
+  .small-btn { font-size: 12px; padding: 6px 12px; border-radius: 8px; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .pending-banner { background: #fff3e0; color: #b8720b; padding: 16px 20px; border-radius: 10px; font-weight: 600; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+  <div class="dash-header">
+    <div class="container">
+      <div>
+        <span class="logo-icon" style="color:var(--gold);"><i class="fas fa-globe-africa"></i></span>
+        <strong style="margin-left:8px;">TOPJOBSEEKERS</strong>
+        <span class="dash-role-pill" id="rolePill">...</span>
+      </div>
+      <div>
+        <a href="index.html" class="btn btn-ghost" style="padding:8px 16px;font-size:13px;">Back to Site</a>
+        <button class="btn btn-outline" id="logoutBtn" style="padding:8px 16px;font-size:13px;border-color:rgba(255,255,255,0.3);color:#fff;">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container dash-body" id="dashBody">
+    <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading your dashboard...</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
