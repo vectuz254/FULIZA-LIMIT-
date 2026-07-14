@@ -397,28 +397,55 @@ input, select, textarea, button { font-family: inherit; }
 @media (max-width: 1024px) {
   .hero-photo-card { max-width: 340px; margin: 0 auto; }
 }
-<!-- ===== CHAT WIDGET ===== -->
-<button class="chat-toggle-btn" id="chatToggleBtn" aria-label="Chat with us">
-  <i class="fas fa-comment-dots"></i>
-</button>
-<div class="chat-panel" id="chatPanel">
-  <div class="chat-panel-header">
-    <div>
-      <strong>TOPJOBSEEKERS Assistant</strong>
-      <span class="chat-status"><i class="fas fa-circle"></i> Online</span>
-    </div>
-    <button id="chatCloseBtn" aria-label="Close chat"><i class="fas fa-times"></i></button>
-  </div>
-  <div class="chat-messages" id="chatMessages"></div>
-  <form class="chat-input-row" id="chatForm">
-    <input type="text" id="chatInput" placeholder="Type your question..." autocomplete="off" />
-    <button type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
-  </form>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="supabase-config.js"></script>
-<script src="script.js"></script>
-<script src="chat-widget.js"></script>
-</body>
-</html>
+/* ===== CHAT WIDGET ===== */
+.chat-toggle-btn {
+  position: fixed; bottom: 28px; right: 28px; z-index: 1100;
+  width: 60px; height: 60px; border-radius: 50%; border: none;
+  background: var(--blue); color: #fff; font-size: 24px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(30,111,217,0.45);
+  transition: all var(--transition);
+}
+.chat-toggle-btn:hover { background: var(--blue-mid); transform: translateY(-2px) scale(1.05); }
+
+.chat-panel {
+  position: fixed; bottom: 100px; right: 28px; z-index: 1100;
+  width: 360px; max-width: calc(100vw - 40px); height: 480px; max-height: 70vh;
+  background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; overflow: hidden;
+  opacity: 0; pointer-events: none; transform: translateY(16px) scale(0.97);
+  transition: all 0.25s ease;
+}
+.chat-panel.open { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
+
+.chat-panel-header {
+  background: var(--navy); color: #fff; padding: 16px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.chat-panel-header strong { display: block; font-size: 14px; }
+.chat-status { font-size: 11px; color: #6be3a3; display: flex; align-items: center; gap: 5px; }
+.chat-status i { font-size: 7px; }
+.chat-panel-header button { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 16px; cursor: pointer; }
+.chat-panel-header button:hover { color: #fff; }
+
+.chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--blue-pale); }
+.chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; }
+.chat-bubble.user { align-self: flex-end; background: var(--blue); color: #fff; border-bottom-right-radius: 4px; }
+.chat-bubble.assistant { align-self: flex-start; background: #fff; color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.chat-bubble.typing { display: flex; gap: 4px; padding: 14px; }
+.chat-bubble.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); animation: chatTyping 1.2s infinite ease-in-out; }
+.chat-bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
+.chat-bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes chatTyping { 0%, 60%, 100% { opacity: 0.3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+
+.chat-input-row { display: flex; border-top: 1px solid var(--border); padding: 10px; gap: 8px; background: #fff; }
+.chat-input-row input { flex: 1; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none; }
+.chat-input-row input:focus { border-color: var(--blue); }
+.chat-input-row button { width: 40px; border: none; border-radius: 10px; background: var(--blue); color: #fff; cursor: pointer; font-size: 14px; }
+.chat-input-row button:hover { background: var(--blue-mid); }
+
+@media (max-width: 480px) {
+  .chat-panel { right: 16px; bottom: 90px; }
+  .chat-toggle-btn { right: 16px; bottom: 20px; }
+}
