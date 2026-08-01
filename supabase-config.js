@@ -4,8 +4,8 @@
 // The anon key is safe to expose publicly — it only allows what your
 // Row Level Security policies in schema.sql allow.
 // =====================================================================
-const SUPABASE_URL = "https://oqptvdxnooyhkfszddsc.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_gzvd1meo2JCyVMBr8GYHpA_BwnSfOsJ";
+const SUPABASE_URL = "https://iyagilyioxjksltdcvlg.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_KNZqCKkbBZyxUGxGM-VeOw_W13R3vh";
 
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
