@@ -124,6 +124,22 @@ async function loadJobs() {
   renderJobs(JOBS);
 }
 
+// ===== JOBS: live auto-refresh =====
+// Any INSERT/UPDATE/DELETE on the 'jobs' table (including rows written by the
+// sync-external-jobs Edge Function) pushes here instantly via Supabase Realtime,
+// so the grid updates itself with no page reload. Falls back to a 5-min poll
+// in case a Realtime event is ever missed.
+function subscribeJobsLive() {
+  supabaseClient
+    .channel('jobs-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => {
+      loadJobs();
+    })
+    .subscribe();
+
+  setInterval(loadJobs, 5 * 60 * 1000);
+}
+
 function timeAgo(dateStr) {
   const diffMs = Date.now() - new Date(dateStr).getTime();
   const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -444,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadHeroPhoto();
   loadShowcase();
   loadJobs();
+  subscribeJobsLive();
   loadTestimonials();
   addRevealClasses();
   observeReveal();
