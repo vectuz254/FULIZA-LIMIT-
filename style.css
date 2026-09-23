@@ -183,6 +183,7 @@ input, select, textarea, button { font-family: inherit; }
 
 .job-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
 .job-logo { width: 48px; height: 48px; border-radius: 10px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.job-caption { font-size: 13.5px; color: var(--text-muted); margin: 10px 0; line-height: 1.55; }
 
 /* ===== DASHBOARD: profile card, stat chips, gentle staggered fade-in ===== */
 .reveal-dash { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
@@ -464,23 +465,23 @@ input, select, textarea, button { font-family: inherit; }
   .hero-photo-card { max-width: 340px; margin: 0 auto; }
 }
 
-/* ===== CHAT WIDGET ===== */
+/* ===== CHAT WIDGET (floating, top-right) ===== */
 .chat-toggle-btn {
-  position: fixed; bottom: 28px; right: 28px; z-index: 1100;
-  width: 60px; height: 60px; border-radius: 50%; border: none;
-  background: var(--blue); color: #fff; font-size: 24px; cursor: pointer;
+  position: fixed; top: 88px; right: 28px; z-index: 1100;
+  width: 56px; height: 56px; border-radius: 50%; border: none;
+  background: var(--blue); color: #fff; font-size: 22px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 24px rgba(30,111,217,0.45);
+  box-shadow: var(--shadow-lg);
   transition: all var(--transition);
 }
 .chat-toggle-btn:hover { background: var(--blue-mid); transform: translateY(-2px) scale(1.05); }
 
 .chat-panel {
-  position: fixed; bottom: 100px; right: 28px; z-index: 1100;
-  width: 360px; max-width: calc(100vw - 40px); height: 480px; max-height: 70vh;
+  position: fixed; top: 152px; right: 28px; z-index: 1100;
+  width: 360px; max-width: calc(100vw - 40px); height: 480px; max-height: 65vh;
   background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
   display: flex; flex-direction: column; overflow: hidden;
-  opacity: 0; pointer-events: none; transform: translateY(16px) scale(0.97);
+  opacity: 0; pointer-events: none; transform: translateY(-12px) scale(0.97);
   transition: all 0.25s ease;
 }
 .chat-panel.open { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
@@ -512,6 +513,6 @@ input, select, textarea, button { font-family: inherit; }
 .chat-input-row button:hover { background: var(--blue-mid); }
 
 @media (max-width: 480px) {
-  .chat-panel { right: 16px; bottom: 90px; }
-  .chat-toggle-btn { right: 16px; bottom: 20px; }
+  .chat-panel { right: 12px; top: 136px; width: calc(100vw - 24px); }
+  .chat-toggle-btn { right: 14px; top: 78px; width: 50px; height: 50px; font-size: 19px; }
 }
