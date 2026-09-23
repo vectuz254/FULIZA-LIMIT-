@@ -205,9 +205,12 @@ function wireDashCvForm(userId, profile) {
       const { error: uploadError } = await supabaseClient.storage.from('cvs').upload(filePath, dashSelectedCvFile);
       if (uploadError) throw uploadError;
 
+      const { data: { user: authUser } } = await supabaseClient.auth.getUser();
+      const emailToUse = profile.email || authUser?.email;
+
       const { error: insertError } = await supabaseClient.from('cv_submissions').insert({
         user_id: userId,
-        full_name: profile.full_name, phone: profile.phone, email: profile.email,
+        full_name: profile.full_name, phone: profile.phone, email: emailToUse,
         destination: document.getElementById('dashDestination').value || null,
         job_category: document.getElementById('dashJobCat').value || null,
         cv_file_path: filePath,
@@ -271,15 +274,167 @@ async function renderEmployerView(profile) {
 // ===================== ADMIN VIEW =====================
 async function renderAdminView() {
   dashBody.innerHTML = `
+    <div class="dash-card" id="adminPostJobCard"></div>
     <div class="dash-card" id="adminWalletCard"><h3>Wallet Management</h3><div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
     <div class="dash-card" id="adminCvCard"><h3>CV Submissions</h3><div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
     <div class="dash-card" id="adminEmployerCard"><h3>Employer Approvals</h3><div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
     <div class="dash-card" id="adminTestiCard"><h3>Testimonials</h3><div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
   `;
+  renderPostJobForm();
   loadAdminWallet();
   loadAdminCvs();
   loadAdminEmployers();
   loadAdminTestimonials();
+}
+
+let postJobSelectedPhoto = null;
+
+function renderPostJobForm() {
+  const card = document.getElementById('adminPostJobCard');
+  card.innerHTML = `
+    <h3><i class="fas fa-bullhorn"></i> Post a Job</h3>
+    <p style="color:var(--text-muted);margin-bottom:16px;">Post a photo + caption directly — no external job source involved. Goes live on the site instantly.</p>
+    <div class="form-group">
+      <label>Job Photo *</label>
+      <div class="file-drop" id="postJobPhotoDrop">
+        <i class="fas fa-image"></i>
+        <span id="postJobPhotoLabel">Tap to choose a photo</span>
+        <input type="file" id="postJobPhotoFile" accept="image/*" hidden />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Job Title *</label><input type="text" id="pjTitle" placeholder="e.g. Registered Nurse" required /></div>
+      <div class="form-group"><label>Company</label><input type="text" id="pjCompany" placeholder="e.g. Al Razi Medical Center" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Country</label><input type="text" id="pjCountry" placeholder="e.g. UAE" /></div>
+      <div class="form-group"><label>Location</label><input type="text" id="pjLocation" placeholder="e.g. Dubai, UAE" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select id="pjCategory">
+          <option>Healthcare</option><option>Construction</option><option>Hospitality</option>
+          <option>Information Technology</option><option>Finance</option><option>Education</option>
+          <option>Domestic</option><option>Logistics</option><option>Sales</option><option>Admin</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Slots</label><input type="number" id="pjSlots" min="1" value="1" /></div>
+    </div>
+    <div class="form-group"><label>Salary (optional)</label><input type="text" id="pjSalary" placeholder="e.g. KSH 80,000/mo or Negotiable" /></div>
+    <div class="form-group">
+      <label>Caption / Description</label>
+      <textarea id="pjCaption" rows="3" placeholder="Write the post caption — role details, requirements, whatever you'd normally include." style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;resize:vertical;"></textarea>
+    </div>
+    <div class="form-group">
+      <label>How should candidates apply?</label>
+      <div class="role-selector" style="display:flex;gap:10px;">
+        <div class="role-option selected" data-method="link" id="applyMethodLink" style="flex:1;text-align:center;padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;">
+          <i class="fas fa-link"></i> Link (Google Form, etc.)
+        </div>
+        <div class="role-option" data-method="email" id="applyMethodEmail" style="flex:1;text-align:center;padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;">
+          <i class="fas fa-envelope"></i> Email (Gmail CV)
+        </div>
+      </div>
+    </div>
+    <div class="form-group" id="pjLinkGroup">
+      <label>Application Link</label>
+      <input type="url" id="pjApplyLink" placeholder="https://docs.google.com/forms/..." />
+    </div>
+    <div class="form-group" id="pjEmailGroup" style="display:none;">
+      <label>Application Email</label>
+      <input type="email" id="pjApplyEmail" placeholder="e.g. topjobsseekers@gmail.com" />
+    </div>
+    <button class="btn btn-primary btn-full" id="postJobBtn"><i class="fas fa-paper-plane"></i> Post Job</button>
+    <div class="field-error" id="postJobMsg" style="margin-top:12px;"></div>
+  `;
+
+  const drop = document.getElementById('postJobPhotoDrop');
+  const fileInput = document.getElementById('postJobPhotoFile');
+  const label = document.getElementById('postJobPhotoLabel');
+  drop.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) {
+      postJobSelectedPhoto = fileInput.files[0];
+      label.textContent = postJobSelectedPhoto.name;
+    }
+  });
+
+  let applyMethod = 'link';
+  const linkOpt = document.getElementById('applyMethodLink');
+  const emailOpt = document.getElementById('applyMethodEmail');
+  linkOpt.addEventListener('click', () => {
+    applyMethod = 'link';
+    linkOpt.classList.add('selected'); emailOpt.classList.remove('selected');
+    document.getElementById('pjLinkGroup').style.display = 'block';
+    document.getElementById('pjEmailGroup').style.display = 'none';
+  });
+  emailOpt.addEventListener('click', () => {
+    applyMethod = 'email';
+    emailOpt.classList.add('selected'); linkOpt.classList.remove('selected');
+    document.getElementById('pjEmailGroup').style.display = 'block';
+    document.getElementById('pjLinkGroup').style.display = 'none';
+  });
+
+  document.getElementById('postJobBtn').addEventListener('click', async () => {
+    const msg = document.getElementById('postJobMsg');
+    msg.classList.remove('show');
+    const title = document.getElementById('pjTitle').value.trim();
+
+    if (!title) { msg.textContent = 'Job title is required.'; msg.classList.add('show'); return; }
+    if (!postJobSelectedPhoto) { msg.textContent = 'Please choose a photo for this post.'; msg.classList.add('show'); return; }
+    if (applyMethod === 'link' && !document.getElementById('pjApplyLink').value.trim()) {
+      msg.textContent = 'Please add an application link.'; msg.classList.add('show'); return;
+    }
+    if (applyMethod === 'email' && !document.getElementById('pjApplyEmail').value.trim()) {
+      msg.textContent = 'Please add an application email.'; msg.classList.add('show'); return;
+    }
+
+    const btn = document.getElementById('postJobBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+
+    try {
+      const safeName = postJobSelectedPhoto.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const filePath = `${Date.now()}-${safeName}`;
+      const { error: uploadError } = await supabaseClient.storage.from('job-photos').upload(filePath, postJobSelectedPhoto);
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabaseClient.storage.from('job-photos').getPublicUrl(filePath);
+
+      const { error: insertError } = await supabaseClient.from('jobs').insert({
+        title,
+        company: document.getElementById('pjCompany').value.trim() || null,
+        country: document.getElementById('pjCountry').value.trim() || null,
+        location: document.getElementById('pjLocation').value.trim() || null,
+        category: document.getElementById('pjCategory').value,
+        slots: parseInt(document.getElementById('pjSlots').value) || 1,
+        salary: document.getElementById('pjSalary').value.trim() || 'Negotiable — inquire',
+        description: document.getElementById('pjCaption').value.trim() || null,
+        image_url: urlData.publicUrl,
+        apply_method: applyMethod,
+        apply_url: applyMethod === 'link' ? document.getElementById('pjApplyLink').value.trim() : null,
+        apply_email: applyMethod === 'email' ? document.getElementById('pjApplyEmail').value.trim() : null,
+        source: 'manual',
+        active: true,
+        badge: 'new',
+        icon: '💼',
+        job_type: 'Full-time',
+      });
+      if (insertError) throw insertError;
+
+      btn.innerHTML = '<i class="fas fa-check"></i> Posted!';
+      btn.style.background = '#0a7c4e';
+      postJobSelectedPhoto = null;
+      setTimeout(renderPostJobForm, 1200); // reset the form for the next post
+    } catch (err) {
+      console.error(err);
+      msg.textContent = err.message || 'Something went wrong.';
+      msg.classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Job';
+    }
+  });
 }
 
 async function loadAdminWallet() {
