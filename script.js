@@ -103,29 +103,55 @@ async function loadHeroPhoto() {
   }
 }
 
-// ===== JOB CARD PHOTOS (real photos matched to job category, via Pexels) =====
-// A small POOL of photos (not just one) is fetched per unique category, and
-// each job is assigned one from that pool based on a stable hash of its id —
-// so the same job always gets the same photo, but different jobs in the same
-// category don't all show the identical picture.
-const categoryPhotoCache = {};
-const POOL_SIZE = 5;
+// ===== JOB CARD PHOTOS (real photos matched to job TITLE, via Pexels) =====
+// Jooble sometimes tags loosely-related job titles with a category that
+// doesn't really fit them (e.g. a "Sales Consultant" listing returned inside
+// a logistics search). To avoid mismatched photos, we scan the ACTUAL job
+// title for keywords first, and only fall back to the stored category if no
+// keyword matches. A small POOL of photos (not just one) is fetched per
+// matched query, and each job picks one from that pool via a stable hash of
+// its id, so the same job always shows the same photo.
+const photoPoolCache = {};
+const POOL_SIZE = 6;
+
+const TITLE_KEYWORD_QUERIES = [
+  { keywords: ['nurse', 'nursing', 'midwife', 'caregiver medical'], query: 'black nurse hospital patient care' },
+  { keywords: ['civil engineer', 'construction', 'welder', 'site engineer', 'electrician', 'plumber', 'mason', 'fitter'], query: 'black construction engineer hard hat site' },
+  { keywords: ['chef', 'cook', 'kitchen', 'culinary', 'baker'], query: 'black chef restaurant kitchen cooking' },
+  { keywords: ['developer', 'programmer', 'software', 'wordpress', 'notion', 'web design', 'frontend', 'backend', 'full stack', 'it support', 'system admin'], query: 'black programmer computer screen office' },
+  { keywords: ['teacher', 'tutor', 'instructor', 'lecturer', 'professor'], query: 'black teacher classroom students' },
+  { keywords: ['logistics', 'warehouse', 'forklift', 'supply chain', 'freight'], query: 'black warehouse worker forklift logistics' },
+  { keywords: ['driver', 'delivery', 'courier', 'chauffeur'], query: 'black delivery driver van smiling' },
+  { keywords: ['sales', 'account executive', 'business development', 'retail assistant'], query: 'black salesperson office client meeting' },
+  { keywords: ['accountant', 'finance', 'tax', 'treasury', 'investment', 'audit', 'bookkeeper'], query: 'black accountant finance analyst calculator desk' },
+  { keywords: ['nanny', 'housekeeper', 'domestic worker', 'house manager'], query: 'black housekeeper nanny caregiver smiling' },
+  { keywords: ['receptionist', 'administrator', 'office assistant', 'secretary', 'admin'], query: 'black office administrator typing desk' },
+  { keywords: ['security guard', 'security officer'], query: 'black security guard professional uniform' },
+  { keywords: ['hotel', 'housekeeping', 'hospitality'], query: 'black hotel staff hospitality smiling' },
+];
 
 const CATEGORY_QUERIES = {
   'Healthcare': 'black nurse hospital patient care',
   'Construction': 'black construction engineer hard hat site',
   'Engineering': 'black engineer blueprint site work',
-  'Hospitality': 'black chef restaurant kitchen cooking',
-  'IT': 'black software developer coding laptop',
-  'Technology': 'black software developer coding laptop',
+  'Hospitality': 'black hotel staff hospitality smiling',
+  'IT': 'black programmer computer screen office',
+  'Technology': 'black programmer computer screen office',
   'Education': 'black teacher classroom students',
   'Logistics': 'black warehouse worker forklift logistics',
   'Finance': 'black accountant finance analyst calculator desk',
   'Domestic': 'black housekeeper nanny caregiver smiling',
-  'Sales': 'black sales professional handshake office',
+  'Sales': 'black salesperson office client meeting',
   'Admin': 'black office administrator typing desk',
 };
 const DEFAULT_QUERY = 'black professional working office smiling';
+
+function queryForJob(job) {
+  const title = (job.title || '').toLowerCase();
+  const bucket = TITLE_KEYWORD_QUERIES.find(b => b.keywords.some(k => title.includes(k)));
+  if (bucket) return bucket.query;
+  return CATEGORY_QUERIES[job.category] || DEFAULT_QUERY;
+}
 
 function hashToIndex(str, mod) {
   let hash = 0;
@@ -133,28 +159,31 @@ function hashToIndex(str, mod) {
   return hash % mod;
 }
 
-async function getCategoryPhotoPool(category) {
-  const key = category || 'General';
-  if (categoryPhotoCache[key] !== undefined) return categoryPhotoCache[key];
-  const query = CATEGORY_QUERIES[key] || DEFAULT_QUERY;
+async function getPhotoPoolForQuery(query) {
+  if (photoPoolCache[query] !== undefined) return photoPoolCache[query];
   const photos = await fetchPexelsPhoto(query, 'square', POOL_SIZE);
-  categoryPhotoCache[key] = photos.map(p => p.src.medium);
-  return categoryPhotoCache[key];
+  photoPoolCache[query] = photos.map(p => p.src.medium);
+  return photoPoolCache[query];
 }
 
-// After the job grid is drawn, quietly fetch a photo pool per unique category
-// present on screen, then assign each job card a specific photo from its
-// category's pool and fade it in.
+// After the job grid is drawn, resolve each job's best-fit search query
+// (title keywords first, category as fallback), fetch each unique query's
+// photo pool once, then assign every card a specific photo and fade it in.
 async function loadJobPhotos(jobs) {
-  const categories = [...new Set(jobs.map(j => j.category || 'General'))];
-  const pools = {};
-  await Promise.all(categories.map(async (cat) => { pools[cat] = await getCategoryPhotoPool(cat); }));
+  const needsPhoto = jobs.filter(j => !j.image_url); // manual posts already have their own photo
+  if (needsPhoto.length === 0) return;
 
-  jobs.forEach(j => {
-    const pool = pools[j.category || 'General'];
+  const jobsWithQuery = needsPhoto.map(j => ({ job: j, query: queryForJob(j) }));
+  const uniqueQueries = [...new Set(jobsWithQuery.map(x => x.query))];
+
+  const pools = {};
+  await Promise.all(uniqueQueries.map(async (q) => { pools[q] = await getPhotoPoolForQuery(q); }));
+
+  jobsWithQuery.forEach(({ job, query }) => {
+    const pool = pools[query];
     if (!pool || pool.length === 0) return;
-    const url = pool[hashToIndex(String(j.id), pool.length)];
-    const img = document.querySelector(`.job-photo[data-job-id="${j.id}"] img`);
+    const url = pool[hashToIndex(String(job.id), pool.length)];
+    const img = document.querySelector(`.job-photo[data-job-id="${job.id}"] img`);
     if (img) {
       img.src = url;
       img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
@@ -179,6 +208,8 @@ async function loadJobs() {
       country: j.country, category: j.category, salary: j.salary,
       type: j.job_type, badge: j.badge, icon: j.icon,
       posted: timeAgo(j.created_at), slots: j.slots,
+      image_url: j.image_url, description: j.description,
+      apply_method: j.apply_method, apply_url: j.apply_url, apply_email: j.apply_email,
     }));
   }
   renderJobs(JOBS);
@@ -224,10 +255,16 @@ function renderJobs(jobs) {
     return;
   }
 
-  grid.innerHTML = jobs.map(j => `
+  grid.innerHTML = jobs.map(j => {
+    const applyHref = j.apply_method === 'email' && j.apply_email
+      ? `mailto:${j.apply_email}?subject=${encodeURIComponent('Application: ' + j.title)}`
+      : (j.apply_url || '#cv-upload');
+    const applyTarget = j.apply_method === 'link' ? ' target="_blank" rel="noopener"' : '';
+
+    return `
     <div class="job-card reveal" data-category="${j.category}" data-country="${j.country}">
       <div class="job-photo" data-job-id="${j.id}">
-        <img alt="" loading="lazy" />
+        <img alt="" loading="lazy" ${j.image_url ? `src="${j.image_url}" class="loaded"` : ''} />
         <span class="job-photo-fallback">${j.icon}</span>
         <span class="job-badge badge-${j.badge}">${j.badge.toUpperCase()}</span>
       </div>
@@ -238,13 +275,15 @@ function renderJobs(jobs) {
         <span class="job-tag"><i class="fas fa-briefcase"></i>${j.type}</span>
         <span class="job-tag"><i class="fas fa-users"></i>${j.slots} slot${j.slots > 1 ? 's' : ''}</span>
       </div>
+      ${j.description ? `<p class="job-caption">${j.description}</p>` : ''}
       <div class="job-salary">${j.salary}</div>
       <div class="job-footer">
         <span class="job-date"><i class="fas fa-clock" style="margin-right:4px;"></i>${j.posted}</span>
-        <a href="#cv-upload" class="btn btn-primary btn-apply">Apply Now</a>
+        <a href="${applyHref}" class="btn btn-primary btn-apply"${applyTarget}>Apply Now</a>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   observeReveal();
   loadJobPhotos(jobs); // fire-and-forget: fades real photos in a moment later
